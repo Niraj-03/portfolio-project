@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Calculator</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+         /* Custom styles for the calculator */
+body {
+    font-family: 'Inter', sans-serif;
+}
+/* Prevents highlighting of buttons on repeated clicks */
+.calculator-btn {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}
+/* Custom focus ring color */
+.calculator-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.5); /* A light blue ring */
+}
+/* Style for the display to look like a classic calculator screen */
+#display {
+    font-family: 'Orbitron', sans-serif; /* A more digital-looking font, with fallback */
+}
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+
+</style>
+   
+</head>
+
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+    <!-- Calculator Body -->
+    <div class="w-full max-w-xs md:max-w-sm mx-auto bg-white rounded-2xl shadow-2xl p-6">
+        
+        <!-- Display Screen -->
+        <div class="bg-gray-800 text-white rounded-lg p-4 mb-6 shadow-inner">
+            <input id="display" type="text" class="w-full bg-transparent text-right text-4xl md:text-5xl font-bold border-0 focus:ring-0" value="0" readonly>
+        </div>
+
+        <!-- Calculator Buttons Grid -->
+        <div class="grid grid-cols-4 gap-3">
+            <!-- Row 1 -->
+            <button class="calculator-btn bg-red-500 hover:bg-red-600 text-white font-bold py-4 rounded-lg shadow-md transition-transform transform hover:scale-105 text-2xl" onclick="clearDisplay()">C</button>
+            <button class="calculator-btn bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-4 rounded-lg shadow-md transition-transform transform hover:scale-105 text-2xl" onclick="appendToDisplay('/')">/</button>
+            <button class="calculator-btn bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-4 rounded-lg shadow-md transition-transform transform hover:scale-105 text-2xl" onclick="appendToDisplay('*')">x</button>
+            <button class="calculator-btn bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-4 rounded-lg shadow-md transition-transform transform hover:scale-105 text-2xl" onclick="deleteLast()">DEL</button>
+
+            <!-- Row 2 -->
+            <button class="calculator-btn bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-4 rounded-lg shadow-md transition-transform transform hover:scale-105 text-2xl" onclick="appendToDisplay('7')">7</button>
+            <button class="calculator-btn bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-4 rounded-lg shadow-md transition-transform transform hover:scale-105 text-2xl" onclick="appendToDisplay('8')">8</button>
+            <button class="calculator-btn bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-4 rounded-lg shadow-md transition-transform transform hover:scale-105 text-2xl" onclick="appendToDisplay('9')">9</button>
+            <button class="calculator-btn bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-4 rounded-lg shadow-md transition-transform transform hover:scale-105 text-2xl" onclick="appendToDisplay('-')">-</button>
+
+            <!-- Row 3 -->
+            <button class="calculator-btn bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-4 rounded-lg shadow-md transition-transform transform hover:scale-105 text-2xl" onclick="appendToDisplay('4')">4</button>
+            <button class="calculator-btn bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-4 rounded-lg shadow-md transition-transform transform hover:scale-105 text-2xl" onclick="appendToDisplay('5')">5</button>
+            <button class="calculator-btn bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-4 rounded-lg shadow-md transition-transform transform hover:scale-105 text-2xl" onclick="appendToDisplay('6')">6</button>
+            <button class="calculator-btn bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-4 rounded-lg shadow-md transition-transform transform hover:scale-105 text-2xl" onclick="appendToDisplay('+')">+</button>
+
+            <!-- Row 4 -->
+            <button class="calculator-btn bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-4 rounded-lg shadow-md transition-transform transform hover:scale-105 text-2xl" onclick="appendToDisplay('1')">1</button>
+            <button class="calculator-btn bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-4 rounded-lg shadow-md transition-transform transform hover:scale-105 text-2xl" onclick="appendToDisplay('2')">2</button>
+            <button class="calculator-btn bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-4 rounded-lg shadow-md transition-transform transform hover:scale-105 text-2xl" onclick="appendToDisplay('3')">3</button>
+            <button class="calculator-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 rounded-lg shadow-md transition-transform transform hover:scale-105 text-2xl row-span-2" onclick="calculateResult()">=</button>
+
+            <!-- Row 5 -->
+            <button class="calculator-btn bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-4 rounded-lg shadow-md transition-transform transform hover:scale-105 text-2xl col-span-2" onclick="appendToDisplay('0')">0</button>
+            <button class="calculator-btn bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-4 rounded-lg shadow-md transition-transform transform hover:scale-105 text-2xl" onclick="appendToDisplay('.')">.</button>
+        </div>
+    </div>
+    <script>
+        const display = document.getElementById('display');
+/**
+     * Appends a value to the display.
+     * If the current display value is '0' or an error message, it replaces it.
+     * @param {string} value - The value to append.
+     */
+    function appendToDisplay(value) {
+        if (display.value === '0' || display.value === 'Error') {
+            display.value = value;
+        } else {
+            display.value += value;
+        }
+    }
+    /**
+     * Clears the display and resets it to '0'.
+     */
+    function clearDisplay() {
+        display.value = '0';
+    }
+    /**
+     * Deletes the last character from the display.
+     * If the display becomes empty, it resets to '0'.
+     */
+    function deleteLast() {
+        display.value = display.value.toString().slice(0, -1);
+        if (display.value === '') {
+            display.value = '0';
+        }
+    }
+
+    /**
+     * Calculates the result of the expression in the display.
+     * Uses a safe evaluation method to prevent security risks.
+     */
+    function calculateResult() {
+        try {
+            // A safer way to evaluate the expression without using eval().
+            // This function constructor creates a function from a string of code.
+            // It's sandboxed and safer than a direct eval() call.
+            const result = new Function('return ' + display.value)();
+            if (isNaN(result) || !isFinite(result)) {
+                display.value = 'Error';
+            } else {
+                // Round to a certain number of decimal places to avoid floating point issues
+                display.value = parseFloat(result.toFixed(10));
+            }
+        } catch (error) {
+            display.value = 'Error';
+        }
+    }
+    // Add keyboard support for a better user experience
+    document.addEventListener('keydown', function(event) {
+        const key = event.key;
+        
+        if (key >= '0' && key <= '9') {
+            appendToDisplay(key);
+        } else if (key === '.') {
+            appendToDisplay('.');
+        } else if (key === '+') {
+            appendToDisplay('+');
+        } else if (key === '-') {
+            appendToDisplay('-');
+        } else if (key === '*') {
+            appendToDisplay('*');
+        } else if (key === '/') {
+            appendToDisplay('/');
+        } else if (key === 'Enter' || key === '=') {
+            event.preventDefault(); // Prevent form submission if it's in a form
+            calculateResult();
+        } else if (key === 'Backspace') {
+            deleteLast();
+        } else if (key === 'Escape' || key.toLowerCase() === 'c') {
+            clearDisplay();
+        }
+    });
+    </script>
+</body>
+</html>
